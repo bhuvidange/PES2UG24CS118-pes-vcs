@@ -16,6 +16,11 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
+
+#include "index.h"
+#include "pes.h"
+
+int object_write(int type, const void *data, size_t len, ObjectID *id_out);
 // ─── Mode Constants ─────────────────────────────────────────────────────────
 
 #define MODE_FILE      0100644
