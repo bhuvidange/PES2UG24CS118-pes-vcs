@@ -209,31 +209,30 @@ static int build_tree(Index *index, const char *prefix, Tree *tree) {
 
     return 0;
 }
-int tree_from_index(ObjectID *id_out) {
+
+    int tree_from_index(ObjectID *id_out) {
     Index index;
 
     if (index_load(&index) != 0)
         return -1;
 
     Tree root;
-    root.count = 0;
 
-    for (int i = 0; i < index.count; i++) {
-        const char *path = index.entries[i].path;
+    if (build_tree(&index, "", &root) != 0)
+        return -1;
 
-        // skip nested paths for now
-        if (strchr(path, '/') != NULL)
-            continue;
+    void *data;
+    size_t len;
 
-        TreeEntry *e = &root.entries[root.count++];
+    if (tree_serialize(&root, &data, &len) != 0)
+        return -1;
 
-        e->mode = index.entries[i].mode;
-        e->hash = index.entries[i].hash;
-
-        strncpy(e->name, path, sizeof(e->name));
-        e->name[sizeof(e->name) - 1] = '\0';
+    if (object_write(OBJ_TREE, data, len, id_out) != 0) {
+        free(data);
+        return -1;
     }
 
-    (void)id_out;
+    free(data);
+
     return 0;
 }
