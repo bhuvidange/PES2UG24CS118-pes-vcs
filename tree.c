@@ -135,9 +135,6 @@ int tree_serialize(const Tree *tree, void **data_out, size_t *len_out) {
 //
 // Returns 0 on success, -1 on error.
 int tree_from_index(ObjectID *id_out) {
-    // TODO: Implement recursive tree building
-    // (See Lab Appendix for logical steps)
-    int tree_from_index(ObjectID *id_out) {
     Index index;
 
     if (index_load(&index) != 0)
@@ -146,10 +143,22 @@ int tree_from_index(ObjectID *id_out) {
     Tree root;
     root.count = 0;
 
-    (void)id_out;
-    return 0;
-}
+    for (int i = 0; i < index.count; i++) {
+        const char *path = index.entries[i].path;
+
+        // skip nested paths for now
+        if (strchr(path, '/') != NULL)
+            continue;
+
+        TreeEntry *e = &root.entries[root.count++];
+
+        e->mode = index.entries[i].mode;
+        e->hash = index.entries[i].hash;
+
+        strncpy(e->name, path, sizeof(e->name));
+        e->name[sizeof(e->name) - 1] = '\0';
+    }
 
     (void)id_out;
-    return -1;
+    return 0;
 }
