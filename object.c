@@ -1,4 +1,6 @@
 // object.c — Content-addressable object store
+// Phase 1 step: header + hashing
+
 
 #include "pes.h"
 #include <stdio.h>
