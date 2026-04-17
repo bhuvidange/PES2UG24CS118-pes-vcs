@@ -2,6 +2,8 @@
 // Phase 1 step: header + hashing
 // Phase 1 step: object_write logic
 // Phase 1 step: object_read parsing
+// Phase 1 step: integrity verification
+
 
 #include "pes.h"
 #include <stdio.h>
