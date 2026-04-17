@@ -135,11 +135,38 @@ int index_status(const Index *index) {
 //
 // Returns 0 on success, -1 on error.
 int index_load(Index *index) {
-    // TODO: Implement index loading
-    // (See Lab Appendix for logical steps)
-    FILE *fp = fopen(".pes/index", "r");
-    (void)index;
-    return -1;
+    Index *index_load(const char *path)
+{
+    Index *idx = malloc(sizeof(Index));
+    init_index(idx);
+
+    FILE *f = fopen(path, "r");
+
+    // IMPORTANT: empty index is NOT an error
+    if (!f)
+    {
+        return idx;
+    }
+
+    char line[1024];
+
+    while (fgets(line, sizeof(line), f))
+    {
+        char mode[10];
+        char hash[65];
+        char path[512];
+        long mtime;
+        long size;
+
+        sscanf(line, "%s %s %ld %ld %s",
+               mode, hash, &mtime, &size, path);
+
+        index_add_entry(idx, mode, hash, mtime, size, path);
+    }
+
+    fclose(f);
+    return idx;
+}
 }
 
 // Save the index to .pes/index atomically.
